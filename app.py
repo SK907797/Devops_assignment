@@ -1,8 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
-# -------- DATA (same as your Tkinter app) -------- #
 programs = {
     "Fat Loss (FL)": {
         "workout": "Mon: 5x5 Back Squat + AMRAP\nTue: EMOM 20min Assault Bike\nWed: Bench Press + 21-15-9\nThu: 10RFT Deadlifts/Box Jumps\nFri: 30min Active Recovery",
@@ -21,39 +20,22 @@ programs = {
     }
 }
 
-# -------- ROUTES -------- #
-
-# Home route
+# UI Route
 @app.route('/')
-def home():
-    return jsonify({
-        "message": "ACEest Fitness API Running 🚀",
-        "available_programs": list(programs.keys())
-    })
+def index():
+    return render_template("index.html", programs=programs)
 
-
-# Get all programs
-@app.route('/programs', methods=['GET'])
+# API routes (keep them)
+@app.route('/programs')
 def get_programs():
-    return jsonify({"programs": list(programs.keys())})
+    return jsonify(list(programs.keys()))
 
-
-# Get specific program details
-@app.route('/program/<name>', methods=['GET'])
+@app.route('/program/<name>')
 def get_program(name):
     program = programs.get(name)
-
     if not program:
-        return jsonify({"error": "Program not found"}), 404
+        return jsonify({"error": "Not found"}), 404
+    return jsonify(program)
 
-    return jsonify({
-        "program": name,
-        "workout": program["workout"],
-        "diet": program["diet"],
-        "color": program["color"]
-    })
-
-
-# -------- RUN -------- #
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

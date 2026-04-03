@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ACEest Fitness</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>ACEest Fitness & Gym</h1>
+
+<select id="programSelect" onchange="loadProgram()">
+    <option value="">Select Program</option>
+    {% for program in programs %}
+        <option value="{{ program }}">{{ program }}</option>
+    {% endfor %}
+</select>
+
+<div id="output">
+    <h3>Workout</h3>
+    <pre id="workout"></pre>
+
+    <h3>Diet</h3>
+    <pre id="diet"></pre>
+</div>
+
+<script>
+function loadProgram() {
+    const program = document.getElementById("programSelect").value;
+
+    fetch(`/program/${program}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("workout").innerText = data.workout || "";
+            document.getElementById("diet").innerText = data.diet || "";
+        });
+}
+</script>
+
+</body>
+</html>
